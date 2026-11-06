@@ -1,0 +1,29 @@
+name: Shell Command # "name" key는 Workflow 의 id, 이름; name 이 위치한 곳에서 Workflow 의 이름을 지정할 수 있음.
+on: workflow_dispatch # "on" key는 event trigger; workflow_dispatch 는 수동으로 Workflow 를 실행할 수 있도록 함.
+jobs: # "jobs" key는 task 단위; jobs 의 key 는 job 의 id, value 는 job 의 정의
+  run: # job 의 id; 사용자 임의로 작성가능, runs 이런거도 됨
+    runs-on: ubuntu-latest # "runs-on" key는 job 이 실행될 "실행환경"; ubuntu-latest 는 최신 Ubuntu 환경에서 실행됨.
+    steps: # "steps" key는 job 의 실행의 최소 단위; steps 의 key 는 step 의 id, value 는 step 의 정의
+      - name: Check environment #step1의 ID; 사용자 임의로 작성가능, 
+        run: | #"run" key는 step 의 실행 명령어; | 는 여러 줄의 명령어를 작성할 수 있도록 함.
+          echo "Current directory:"
+          pwd
+          echo "File list:"
+          ls -la
+      - name: Check file
+        run: | #if 문은 fi 로 끝나야 함. if 문 안에 있는 명령어는 들여쓰기 해야함.
+          if [ -f "README.md" ]; then 
+            echo "File exists."
+            else
+            echo "File not found"
+            fi 
+      - name: Repeat commands
+        run: | # for 문은 done 으로 끝나야 함. for 문 안에 있는 명령어는 들여쓰기 해야함.
+          for i in 1 2 3
+          do 
+            echo "Test $i"
+            done
+      - name: Use environment variable
+        env: # "env" key는 환경변수 설정; env 의 key 는 환경변수 이름, value 는 환경변수 값.
+          MESSAGE: Hello!
+        run: echo "$MESSAGE"
