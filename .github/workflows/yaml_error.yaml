@@ -1,7 +1,10 @@
+# 오류 기록: steps 키 앞 공백이 5칸이어서 YAML 파싱 오류가 발생했다.
+# 실패 실행: https://github.com/Bbackbagi2/git-practice/actions/runs/42141656138
+# 해결: steps 키를 runs-on 키와 같은 깊이(공백 4칸)로 정렬했다.
 name: YAML error
 on: push
 jobs:
   run:
     runs-on: ubuntu-latest
-     steps:
-        - run: echo "YAML 들여쓰기 문법 오류"
+    steps:
+      - run: echo "YAML 들여쓰기 오류 해결"
