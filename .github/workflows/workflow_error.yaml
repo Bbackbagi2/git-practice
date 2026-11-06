@@ -2,6 +2,6 @@ name: Workflow error
 on: push
 jobs:
   run:
-    runs-on: ubuntu-latest
+    run-on: ubuntu-latest #runs-on 이 맞는 syntax; run-on 은 오류
     steps:
       - run: date
