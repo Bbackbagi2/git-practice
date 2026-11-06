@@ -1,0 +1,9 @@
+name: Variables
+on: workflow_dispatch
+jobs:
+  print:
+    runs-on: ubuntu-latest
+    env: # 환경 변수 설정 context 아니고, vars 에서 가져오는 환경 변수는 workflow_dispatch 이벤트에서만 사용 가능.
+      USERNAME: ${{ vars.USERNAME }}
+    steps:
+      - run: echo "$USERNAME"
