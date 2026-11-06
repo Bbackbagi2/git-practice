@@ -1,7 +1,10 @@
+# 오류 기록: job의 실행 환경 키를 run-on으로 써서 워크플로 검증에 실패했다.
+# 실패 실행: https://github.com/Bbackbagi2/git-practice/actions/runs/42141068298
+# 해결: GitHub Actions의 올바른 키인 runs-on으로 수정했다.
 name: Workflow error
 on: push
 jobs:
   run:
-    run-on: ubuntu-latest #runs-on 이 맞는 syntax; run-on 은 오류
+    runs-on: ubuntu-latest
     steps:
       - run: date
