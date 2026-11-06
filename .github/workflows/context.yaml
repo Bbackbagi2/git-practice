@@ -7,9 +7,15 @@ jobs:
       - run: echo "${{ github.actor }}" # '$' 는 참조 연산자, '{}' 는 참조 범위 지정, 'github.actor' 는 GitHub context 의 actor 속성.
       - name: GitHub Context
         run: 
-          echo "Repository: ${{ github.repository }}"
-          echo "Actor: ${{github.actor }}""
-          echo "Event: ${{ github.event_name }}"
-          echo "Branch: ${{github.ref_name }}"
-          echo "Commit: ${{ github.sha }}"
-      
+          echo "Repository: ${{ github.repository }}" #github에서 가져오는것
+          echo "Actor: ${{github.actor }}" #github에서 가져오는것
+          echo "Event: ${{ github.event_name }}" #github에서 가져오는것
+          echo "Branch: ${{github.ref_name }}" #github에서 가져오는것
+          echo "Commit: ${{ github.sha }}" #github에서 가져오는것
+      - name: Runner Information
+        run:
+          echo "Runner: ${{ runner.name }}" #runner에서 가져오는것
+          echo "OS: ${{ runner.os }}" #runner에서 가져오는것
+          echo "Architecture: ${{ runner.arch }}" #runner에서 가져오는것
+          echo "Environment: ${{ runner.environment }}" #runner에서 가져오는것
+          echo "Temp: ${{runner.temp }}" #runner에서 가져오는것
