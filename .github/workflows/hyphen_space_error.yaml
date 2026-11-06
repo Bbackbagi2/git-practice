@@ -1,0 +1,10 @@
+# 실습용 YAML 문법 오류: 두 번째 단계의 하이픈 뒤 공백을 빠뜨렸다.
+# 올바른 형태: - run: echo "하이픈 뒤 공백 있음"
+name: Hyphen spacing error
+on: push
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "첫 번째 단계"
+      -run: echo "하이픈 뒤 공백 없음"

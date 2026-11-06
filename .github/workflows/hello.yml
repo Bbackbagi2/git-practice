@@ -5,4 +5,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - run: echo "Hello, World!"
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v4 # 제3자의 action 을 사용; actions/checkout 은 GitHub 에서 제공하는 공식 action; @v4 는 action 의 버전, githubmarketplace 에서 확인 가능.
