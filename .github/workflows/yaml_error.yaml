@@ -1,0 +1,7 @@
+name: YAML error
+on: push
+jobs:
+  run:
+    runs-on: ubuntu-latest
+     steps:
+        - run: echo "YAML 들여쓰기 문법 오류"
