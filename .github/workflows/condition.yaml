@@ -1,0 +1,24 @@
+# if = step 또는 job의 실행 조건 / true면 실행, false면 건너뜀
+# github.run_id = 워크플로 실행 ID / 문자열에 '1' 포함 여부 검사
+# contains(문자열, 찾을 값) = 포함 여부 / ! = 논리 부정
+# 실행 ID에 '1' 포함 = Hello / 포함하지 않음 = Goodbye
+# 같은 step 안의 if와 run 작성 순서 = 조건 판정 결과에 영향 없음
+name: Conditional Example
+on: workflow_dispatch
+jobs:
+  conditional:
+    runs-on: ubuntu-latest
+    steps:
+      # 현재 실행 ID 출력 / 아래 분기 결과를 확인할 기준값
+      - name: Show Run ID
+        run: echo "Run ID = ${{ github.run_id }}"
+
+      # if 먼저 작성 / 실행 ID에 '1'이 있으면 true, Hello 출력
+      - name: Print Hello
+        if: ${{ contains(github.run_id, '1') }}
+        run: echo "Hello"
+
+      # run 먼저 작성 / !contains는 '1'이 없으면 true, Goodbye 출력
+      - name: Print Goodbye
+        run: echo "Goodbye"
+        if: ${{ !contains(github.run_id, '1') }}
