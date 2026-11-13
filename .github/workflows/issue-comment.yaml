@@ -1,0 +1,51 @@
+# GitHub API = HTTP 요청으로 Issue, 댓글 등 저장소 기능 사용
+# POST = 새 댓글 생성 / 성공 응답 201 Created
+# API 경로 = repos/소유자/저장소/issues/Issue번호/comments
+# GITHUB_TOKEN = job 실행 시 GitHub가 제공하는 임시 인증 토큰
+# permissions = 이 워크플로의 GITHUB_TOKEN 권한 설정
+# issues write = Issue와 댓글 작성 권한
+# GH_TOKEN = gh가 자동으로 읽는 인증용 환경변수
+# curl 인증 = Authorization 헤더에 Bearer 토큰 전달
+# 실행 순서 = 새 Issue 열기, CLI 댓글 작성, curl 댓글 작성
+# 예상 결과 = 같은 Issue에 실습 댓글 2개 등록
+name: Issue Comment Example
+on:
+  issues:
+    types: [opened] # Issue가 새로 열릴 때 실행
+permissions:
+  issues: write # API 댓글 생성에 필요한 쓰기 권한
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+
+    env:
+      # secrets.GITHUB_TOKEN 값을 GH_TOKEN에 전달
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # issues 이벤트 payload에서 방금 열린 Issue 번호 가져오기
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+
+    steps:
+      # 1. GitHub CLI 사용 / GH_TOKEN으로 인증
+      # --method POST = 생성 요청 / -f body = 댓글 본문
+      # --jq '.html_url' = 응답 JSON에서 생성된 댓글 링크만 출력
+      - name: Comment with GitHub CLI
+        run: |
+          gh api \
+            --method POST \
+            "repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER/comments" \
+            -f body="Hello from GitHub CLI!" \
+            --jq '.html_url'
+
+      # 2. curl 사용 / 같은 댓글 API에 HTTP 요청 직접 전송
+      # -L = 리다이렉트 따라가기 / --fail-with-body = HTTP 오류 시 실패 처리
+      # Accept = 응답 형식 / Authorization = 인증 / API-Version = API 버전
+      # -d = JSON 댓글 본문 / 응답 JSON으로 생성 결과 확인
+      - name: Comment with curl
+        run: |
+          curl -L --fail-with-body \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER/comments" \
+            -d '{"body":"Hello from curl!"}'
