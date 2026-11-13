@@ -1,0 +1,21 @@
+name: Contexts
+on: push
+jobs:
+  print: #job id, 정식명칭은 Runner name id (사용자 정의)
+    runs-on: ubuntu-latest #runner 실행환경 설정
+    steps:  #runner의 tasks, 정식명칭은 Runner steps (사용자 정의)
+      - run: echo "${{ github.actor }}" # '$' 는 참조 연산자, '{}' 는 참조 범위 지정, 'github.actor' 는 GitHub context 의 actor 속성.
+      - name: GitHub Context
+        run: 
+          echo "Repository: ${{ github.repository }}" #github에서 가져오는것
+          echo "Actor: ${{github.actor }}" #github에서 가져오는것
+          echo "Event: ${{ github.event_name }}" #github에서 가져오는것
+          echo "Branch: ${{github.ref_name }}" #github에서 가져오는것
+          echo "Commit: ${{ github.sha }}" #github에서 가져오는것
+      - name: Runner Information
+        run:
+          echo "Runner: ${{ runner.name }}" #runner에서 가져오는것
+          echo "OS: ${{ runner.os }}" #runner에서 가져오는것
+          echo "Architecture: ${{ runner.arch }}" #runner에서 가져오는것
+          echo "Environment: ${{ runner.environment }}" #runner에서 가져오는것
+          echo "Temp: ${{runner.temp }}" #runner에서 가져오는것
