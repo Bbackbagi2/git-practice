@@ -5,7 +5,11 @@ name: Run Name Example
 # 같은 실행을 Re-run하면 run_number 유지 / run_attempt 증가
 # github.actor = 최초 실행을 요청한 사용자 이름
 # github.ref_name = 실행 대상 브랜치 또는 태그의 짧은 이름
-# 표시 예 = Run #1 by Bbackbagi2 on main / 실제 값은 실행 시 결정
+# 실제 실행 기록 = Actions 43346875613 / 실행 코드 4a0d4c1
+# 이번 github.run_number = 1 / github.actor = Bbackbagi2 / github.ref_name = main
+# 고정 문구 'Run #', ' by ', ' on ' 사이에 각 표현식의 값 결합
+# 실제 실행 제목 = Run #1 by Bbackbagi2 on main
+# 전체 결과 = success / hello job과 Print Hello step 모두 success
 # 큰따옴표 = # 문자가 들어간 전체 제목을 YAML 문자열로 감싸기
 run-name: "Run #${{ github.run_number }} by ${{ github.actor }} on ${{ github.ref_name }}"
 # workflow_dispatch = Actions 화면에서 수동 실행
@@ -17,5 +21,5 @@ jobs:
     steps:
       # step의 name = 실행 로그에서 표시할 단계 이름
       - name: Print Hello
-        # 예상 출력 = Hello GitHub Actions
+        # 실제 출력 = Hello GitHub Actions
         run: echo "Hello GitHub Actions"
