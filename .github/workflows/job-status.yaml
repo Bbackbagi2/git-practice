@@ -1,0 +1,48 @@
+# needs = 먼저 완료돼야 하는 job 지정
+# 실행 순서 1 = job1 실행
+# 실행 순서 2 = job1 완료 후 job2, job3, job4의 조건 각각 평가
+# job2, job3, job4 사이에는 의존 관계 없음 / 조건이 맞는 job은 병렬 실행 가능
+# 이 예제의 success(), failure() = 선행 job1의 성공, 실패 상태 확인
+# always() = 선행 job 결과와 관계없이 true
+# 아래 결과 = 취소 없이 일반 수동 실행했을 때의 예상값
+# 예상 전체 결과 = failure / job1의 의도적인 실패 포함
+name: Job Status Example
+on: workflow_dispatch
+jobs:
+  # 1. needs 없음 / 먼저 실행 / exit 1로 의도적인 실패
+  # 예상 job1 = failure / 종료 코드 1
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail
+        run: exit 1
+
+  # 2. needs job1 / job1 완료까지 대기 / job1 성공 시 실행
+  # job1 실패이므로 success() = false / 예상 job2 = skipped
+  # Job1 succeeded 출력 건너뜀
+  job2:
+    needs: job1
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job1 succeeded"
+
+  # 3. needs job1 / job1 완료까지 대기 / job1 실패 시 실행
+  # job1 실패이므로 failure() = true / 예상 job3 = success
+  # 출력 = Job1 failed / 이 job의 echo 명령은 정상 종료
+  job3:
+    needs: job1
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job1 failed"
+
+  # 4. needs job1 / job1 완료까지 대기 / always() = true
+  # 예상 job4 = success / 출력 = Always executed
+  # job3과 병렬 실행 가능 / 두 job의 시작, 종료 순서는 고정되지 않음
+  job4:
+    needs: job1
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Always executed"
