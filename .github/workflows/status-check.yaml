@@ -5,43 +5,51 @@
 # cancelled() = 워크플로가 취소됐으면 true
 # 상태 확인 함수를 생략한 if = 기본 success() 조건 적용
 # 이 실습 = exit 1로 의도적 실패 / 이후 상태별 실행 확인
-# 예상 전체 결과 = failure / 뒤의 오류 처리 step 성공 후에도 앞선 실패 기록 유지
-# 아래 결과 = 취소하지 않고 일반 수동 실행했을 때의 예상값
+# 실제 전체 결과 = failure / 뒤의 오류 처리 step 성공 후에도 앞선 실패 기록 유지
+# 실행 기록 = Actions 43343423679 / 실행 코드 eb86738
+# 아래 결과 = 실제 수동 실행 확인 / 취소 없음
 name: Status Functions Example
 on: workflow_dispatch
 jobs:
   status-test:
     runs-on: ubuntu-latest
     steps:
-      # 1. 정상 실행 / 예상 success
+      # 1. 정상 실행 / 결과 success
+      # 출력 = Normal execution
       - name: Normal Step
         run: echo "Normal execution"
 
-      # 2. 앞선 step 전부 성공 / success() = true / 예상 success
+      # 2. 앞선 step 전부 성공 / success() = true / 결과 success
+      # 출력 = Previous steps succeeded
       - name: Success Test
         if: ${{ success() }}
         run: echo "Previous steps succeeded"
 
-      # 3. exit 1 = 실패 종료 코드 / 예상 failure
+      # 3. exit 1 = 실패 종료 코드 / 결과 failure
+      # 오류 로그 = Process completed with exit code 1
       - name: Fail Step
         run: exit 1
 
-      # 4. Fail Step 실패 기록 존재 / failure() = true / 예상 success
+      # 4. Fail Step 실패 기록 존재 / failure() = true / 결과 success
+      # 출력 = A previous step failed / echo 명령 성공 후에도 job의 실패 기록 유지
       - name: Failure Test
         if: ${{ failure() }}
         run: echo "A previous step failed"
 
-      # 5. 앞선 실패 기록 유지 / success() = false / 예상 skipped
+      # 5. 앞선 실패 기록 유지 / success() = false / 결과 skipped
+      # All steps succeeded 출력 건너뜀
       - name: Success After Failure
         if: ${{ success() }}
         run: echo "All steps succeeded"
 
-      # 6. always() = true / 앞선 실패 후에도 실행 / 예상 success
+      # 6. always() = true / 앞선 실패 후에도 실행 / 결과 success
+      # 출력 = Always executed
       - name: Always Test
         if: ${{ always() }}
         run: echo "Always executed"
 
-      # 7. 취소하지 않은 실행 / cancelled() = false / 예상 skipped
+      # 7. 취소하지 않은 실행 / cancelled() = false / 결과 skipped
+      # Workflow was cancelled 출력 건너뜀
       - name: Cancelled Test
         if: ${{ cancelled() }}
         run: echo "Workflow was cancelled"
