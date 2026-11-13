@@ -11,19 +11,14 @@
 # 변경 위치 확인 → 파일 비교 필요
 # 기준값 출처 신뢰 필요 → 파일과 기준값 동시 변조 시 단순 비교 통과 가능
 # 작성자·출처 검증 → 전자서명 또는 HMAC 등 추가 수단 활용
-name: Hash Functions Example
 on: workflow_dispatch
 jobs:
   hash-functions:
     runs-on: ubuntu-latest
     steps:
-      # 저장소 파일을 runner 작업공간에 내려받기
-      - uses: actions/checkout@v5
-      - name: GitHub File Hash
-        env:
+      - env:
           # *.yaml → workflows 바로 아래 .yaml 파일 전체
-          # 파일별 SHA-256 계산 → 결과를 결합해 최종 SHA-256 생성
-          # 1st/ 내부 파일과 .yml 확장자는 이 패턴 범위 밖
+          # 일치하는 파일 없음 → hashFiles() 결과는 빈 문자열 ''
           RESULT_YAML: "${{ hashFiles('.github/workflows/*.yaml') }}"
-        # RESULT_YAML → 16진수 64자리 해시 출력
-        run: printenv RESULT_YAML
+        # 대괄호로 결과 범위 표시 → 빈 문자열이면 RESULT_YAML=[]
+        run: echo "RESULT_YAML=[$RESULT_YAML]"
