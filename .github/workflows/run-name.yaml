@@ -1,0 +1,21 @@
+# name = Actions에서 워크플로를 구분하는 이름
+name: Run Name Example
+# run-name = Actions 실행 목록에 표시할 개별 실행 제목
+# github.run_number = 이 워크플로의 실행 번호 / 첫 실행 1 / 새 실행마다 1 증가
+# 같은 실행을 Re-run하면 run_number 유지 / run_attempt 증가
+# github.actor = 최초 실행을 요청한 사용자 이름
+# github.ref_name = 실행 대상 브랜치 또는 태그의 짧은 이름
+# 표시 예 = Run #1 by Bbackbagi2 on main / 실제 값은 실행 시 결정
+# 큰따옴표 = # 문자가 들어간 전체 제목을 YAML 문자열로 감싸기
+run-name: "Run #${{ github.run_number }} by ${{ github.actor }} on ${{ github.ref_name }}"
+# workflow_dispatch = Actions 화면에서 수동 실행
+on: workflow_dispatch
+jobs:
+  # hello = job ID
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      # step의 name = 실행 로그에서 표시할 단계 이름
+      - name: Print Hello
+        # 예상 출력 = Hello GitHub Actions
+        run: echo "Hello GitHub Actions"
