@@ -1,0 +1,45 @@
+# env = YAML에서 환경변수 미리 선언 / 선언한 workflow, job, step 범위에서 사용
+# GITHUB_ENV = runner가 제공하는 환경 파일 경로
+# GITHUB_ENV에 KEY=value 기록 / 같은 job의 후속 step에 환경변수로 반영
+# GITHUB_OUTPUT = runner가 제공하는 step 결과 파일 경로
+# GITHUB_OUTPUT에 이름=값 기록 / 후속 step에서 steps.id.outputs.이름으로 참조
+# >> = 파일 끝에 내용 추가 / 큰따옴표 = 파일 경로를 한 인수로 전달
+# 실행 순서 = Normal ENV, Create Variables, Read Variables
+# 아래 출력 = 실제 실행 전 예상값
+name: Variable Example
+on: workflow_dispatch
+jobs:
+  variable-test:
+    runs-on: ubuntu-latest
+
+    # job 범위 env / MESSAGE는 이 job의 모든 step에서 사용 가능
+    env:
+      MESSAGE: Hello GitHub
+
+    steps:
+      # 1. 미리 선언한 MESSAGE 읽기 / 예상 출력 ENV = Hello GitHub
+      - name: Normal ENV
+        run: echo "ENV = $MESSAGE"
+
+      # 2. 실행 중 값 생성 / 두 특수 파일에 각각 기록
+      # DYNAMIC = Hello ENV / Create Variables 완료 후 다음 step부터 사용
+      # result = Hello OUTPUT / create step의 output으로 등록
+      - name: Create Variables
+        id: create # 후속 step에서 output을 찾을 때 사용할 step ID
+        run: |
+          echo "DYNAMIC=Hello ENV" >> "$GITHUB_ENV"
+          echo "result=Hello OUTPUT" >> "$GITHUB_OUTPUT"
+
+      # 3. 후속 step에서 생성된 값 읽기
+      # steps.create.outputs.result = id가 create인 step의 result 출력값
+      # OUTPUT_VALUE에 담아 shell에서 $OUTPUT_VALUE로 읽기
+      # 예상 출력 Normal ENV = Hello GitHub
+      # 예상 출력 GITHUB_ENV = Hello ENV
+      # 예상 출력 GITHUB_OUTPUT = Hello OUTPUT
+      - name: Read Variables
+        env:
+          OUTPUT_VALUE: ${{ steps.create.outputs.result }}
+        run: |
+          echo "Normal ENV = $MESSAGE"
+          echo "GITHUB_ENV = $DYNAMIC"
+          echo "GITHUB_OUTPUT = $OUTPUT_VALUE"
