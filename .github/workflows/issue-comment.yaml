@@ -10,7 +10,10 @@
 # 실제 결과 = Issue #1에 CLI 댓글과 curl 댓글 각 1개 등록
 # 2차 실습 = push 이벤트 / 매 push마다 실습 Issue #1에 댓글 2개 추가
 # 실행 순서 = push 발생, CLI 댓글 작성, curl 댓글 작성
-# 예상 결과 = 같은 Issue에 실습 댓글 2개 등록
+# push 실습 결과 = 15d24c6 / Actions 43350071442 / success
+# CLI, curl 두 단계 모두 success / push 직후 댓글 2개 추가 확인
+# opened 실습 2개 + push 실습 2개 = 당시 Issue #1 댓글 4개
+# 이후 push도 같은 Issue #1에 댓글 2개씩 추가
 name: Issue Comment Example
 on: push # 브랜치 제한 없이 push 이벤트로 실행
 permissions:
