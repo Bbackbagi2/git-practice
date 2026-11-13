@@ -16,6 +16,8 @@ jobs:
   hash-functions:
     runs-on: ubuntu-latest
     steps:
+      # uses = 저장소 파일을 runner 작업공간으로 가져오기
+      - uses: actions/checkout@v5
       - env:
           # *.yaml = workflows 바로 아래 .yaml 파일 전체
           # 일치하는 파일 없음 = hashFiles() 결과는 빈 문자열 ''
