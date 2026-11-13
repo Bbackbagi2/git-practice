@@ -22,5 +22,13 @@ jobs:
           # *.yaml = workflows 바로 아래 .yaml 파일 전체
           # 일치하는 파일 없음 = hashFiles() 결과는 빈 문자열 ''
           RESULT_YAML: "${{ hashFiles('.github/workflows/*.yaml') }}"
-        # 대괄호로 결과 범위 표시 / 빈 문자열이면 RESULT_YAML=[]
-        run: echo "RESULT_YAML=[$RESULT_YAML]"
+        # run으로 수정하기 전 파일 집합의 해시
+        run: echo "BEFORE_YAML=[$RESULT_YAML]"
+      # run = runner의 hash.yaml에 주석 한 줄 추가
+      # hash.yaml도 *.yaml 대상에 포함 / 같은 실행 안에서 수정 전후 비교
+      - run: |
+          echo '# hash comparison test' >> .github/workflows/hash.yaml
+      - env:
+          RESULT_YAML: "${{ hashFiles('.github/workflows/*.yaml') }}"
+        # 수정 후 해시 / 파일 내용이 달라지면 해시도 달라짐
+        run: echo "AFTER_YAML=[$RESULT_YAML]"
