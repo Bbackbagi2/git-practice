@@ -16,19 +16,28 @@ jobs:
   hash-functions:
     runs-on: ubuntu-latest
     steps:
-      # uses = 저장소 파일을 runner 작업공간으로 가져오기
+      # 먼저 저장소 파일을 runner 작업공간에 가져오기
       - uses: actions/checkout@v5
-      - env:
-          # *.yaml = workflows 바로 아래 .yaml 파일 전체
-          # 일치하는 파일 없음 = hashFiles() 결과는 빈 문자열 ''
+
+      # checkout 다음에 파일 생성 / echo가 마지막 줄바꿈도 추가
+      - name: Create Sample File
+        run: |
+          echo "Hello GitHub Actions" > sample.txt
+
+      # 생성한 파일이 존재하는 상태에서 해시 계산
+      - name: Hash Test
+        env:
+          # sample.txt 한 파일의 해시
+          RESULT_HASH: "${{ hashFiles('sample.txt') }}"
+          # *.txt에 sample.txt 하나만 해당하면 RESULT_HASH와 같은 값
+          RESULT_ALL: "${{ hashFiles('*.txt') }}"
+          # 파일 없음 = 빈 문자열
+          RESULT_MISSING: "${{ hashFiles('missing.txt') }}"
+        run: printenv | grep '^RESULT_' | sort
+
+      - name: GitHub File Hash
+        env:
+          # checkout으로 받은 workflows 바로 아래 .yaml 파일 집합의 해시
+          # sample.txt는 이 패턴에 포함되지 않음
           RESULT_YAML: "${{ hashFiles('.github/workflows/*.yaml') }}"
-        # run으로 수정하기 전 파일 집합의 해시
-        run: echo "BEFORE_YAML=[$RESULT_YAML]"
-      # run = runner의 hash.yaml에 주석 한 줄 추가
-      # hash.yaml도 *.yaml 대상에 포함 / 같은 실행 안에서 수정 전후 비교
-      - run: |
-          echo '# hash comparison test' >> .github/workflows/hash.yaml
-      - env:
-          RESULT_YAML: "${{ hashFiles('.github/workflows/*.yaml') }}"
-        # 수정 후 해시 / 파일 내용이 달라지면 해시도 달라짐
-        run: echo "AFTER_YAML=[$RESULT_YAML]"
+        run: printenv | grep '^RESULT_'
