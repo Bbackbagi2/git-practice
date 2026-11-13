@@ -6,12 +6,17 @@ jobs:
     steps:
       - name: String Comparison Test
         env:
-          TEST_CONTAINS_1: ${{ contains('Hello GitHub', 'Git') }}
-          TEST_CONTAINS_2: ${{ contains('Hello GitHub', 'Python') }}
-          TEST_STARTSWITH_1: ${{ startsWith('Hello GitHub', 'Hello') }}
-          TEST_STARTSWITH_2: ${{ startsWith('Hello GitHub', 'Git') }}
-          TEST_ENDSWITH_1: ${{ endsWith('Hello GitHub', 'GitHub') }}
-          TEST_ENDSWITH_2: ${{ endsWith('Hello GitHub', 'Hello') }}
-          TEST_CASE: ${{ contains('Hello GitHub', 'github') }}
+          # contains는 문자열 안의 어느 위치든 부분 문자열이 포함되면 true를 반환한다.
+          # 완전한 단어 일치가 필요하지 않아 'Git'은 'GitHub'의 일부로 일치한다.
+          TEST_CONTAINS_1: ${{ contains('Hello GitHub', 'Git') }} # true
+          TEST_CONTAINS_2: ${{ contains('Hello GitHub', 'Python') }} # false
+          # startsWith는 문자열의 시작 부분이 일치하는지 검사한다.
+          TEST_STARTSWITH_1: ${{ startsWith('Hello GitHub', 'Hello') }} # true
+          TEST_STARTSWITH_2: ${{ startsWith('Hello GitHub', 'Git') }} # false
+          # endsWith는 문자열의 끝부분이 일치하는지 검사한다.
+          TEST_ENDSWITH_1: ${{ endsWith('Hello GitHub', 'GitHub') }} # true
+          TEST_ENDSWITH_2: ${{ endsWith('Hello GitHub', 'Hello') }} # false
+          # 세 함수 모두 대소문자를 구분하지 않으므로 'github'도 'GitHub'와 일치한다.
+          TEST_CASE: ${{ contains('Hello GitHub', 'github') }} # true
 
         run: printenv | grep '^TEST_' | sort
