@@ -11,6 +11,21 @@
 # 변경 위치 확인 = 파일 비교 필요
 # 기준값 출처 신뢰 필요 / 파일과 기준값 동시 변조 시 단순 비교 통과 가능
 # 작성자, 출처 검증 = 전자서명 또는 HMAC 등 추가 수단 활용
+# 실행 순서와 결과 기록
+# 1) checkout 없이 해시 계산 / c50b18c / Actions 43340725888
+# 결과 RESULT_YAML=[] / 작업공간에 대상 파일 없음
+# 2) checkout 추가 후 해시 계산 / cdbdb73 / Actions 43341097370
+# 결과 RESULT_YAML = 64자리 해시 / 저장소 파일 사용 가능
+# 3) checkout, 수정 전 해시, run으로 주석 추가, 수정 후 해시
+# 4e962aa / Actions 43341245417 / BEFORE_YAML과 AFTER_YAML이 서로 다름
+# 수정 대상 = runner의 hash.yaml / 주석 한 줄도 파일 내용 변경
+# 4) checkout, sample.txt 생성 run, Hash Test, GitHub File Hash
+# ad8ce51 / Actions 43341432051 / 모든 단계 성공
+# RESULT_HASH = RESULT_ALL / 당시 *.txt 대상은 sample.txt 하나
+# RESULT_MISSING = 빈 문자열 / RESULT_YAML = 64자리 해시
+# hash.yaml 자체도 해시 대상 / 커밋별 내용 변경으로 기준값도 변경
+# run의 수정 효과 비교 = 3번 실행 내부의 수정 전후 값 사용
+
 on: workflow_dispatch
 jobs:
   hash-functions:
