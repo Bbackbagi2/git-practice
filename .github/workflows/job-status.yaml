@@ -4,13 +4,17 @@
 # job2, job3, job4 사이에는 의존 관계 없음 / 조건이 맞는 job은 병렬 실행 가능
 # 이 예제의 success(), failure() = 선행 job1의 성공, 실패 상태 확인
 # always() = 선행 job 결과와 관계없이 true
-# 아래 결과 = 취소 없이 일반 수동 실행했을 때의 예상값
-# 예상 전체 결과 = failure / job1의 의도적인 실패 포함
+# 실제 실행 기록 = Actions 43346118542 / 실행 코드 335d353
+# 기록 시각 = 2026-11-13 한국 시간(KST) / 취소 없이 수동 실행
+# 관찰 순서 = job1 완료, job2 skipped 처리, job3 시작, job4 시작
+# job3과 job4의 실행 시간 겹침 / 이번 실행에서는 job3이 먼저 시작
+# 실제 전체 결과 = failure / job1의 의도적인 실패 포함
 name: Job Status Example
 on: workflow_dispatch
 jobs:
   # 1. needs 없음 / 먼저 실행 / exit 1로 의도적인 실패
-  # 예상 job1 = failure / 종료 코드 1
+  # 결과 job1 = failure / 종료 코드 1
+  # 실제 실행 = 10:36:04 ~ 10:36:08 / exit 1 오류 확인
   job1:
     runs-on: ubuntu-latest
     steps:
@@ -18,8 +22,8 @@ jobs:
         run: exit 1
 
   # 2. needs job1 / job1 완료까지 대기 / job1 성공 시 실행
-  # job1 실패이므로 success() = false / 예상 job2 = skipped
-  # Job1 succeeded 출력 건너뜀
+  # job1 실패이므로 success() = false / 결과 job2 = skipped
+  # 10:36:08에 skipped 처리 / 실행 step 없음 / Job1 succeeded 출력 건너뜀
   job2:
     needs: job1
     if: ${{ success() }}
@@ -28,8 +32,9 @@ jobs:
       - run: echo "Job1 succeeded"
 
   # 3. needs job1 / job1 완료까지 대기 / job1 실패 시 실행
-  # job1 실패이므로 failure() = true / 예상 job3 = success
-  # 출력 = Job1 failed / 이 job의 echo 명령은 정상 종료
+  # job1 실패이므로 failure() = true / 결과 job3 = success
+  # 실제 실행 = 10:36:10 ~ 10:36:14
+  # 출력 = Job1 failed / echo 명령 정상 종료
   job3:
     needs: job1
     if: ${{ failure() }}
@@ -38,7 +43,8 @@ jobs:
       - run: echo "Job1 failed"
 
   # 4. needs job1 / job1 완료까지 대기 / always() = true
-  # 예상 job4 = success / 출력 = Always executed
+  # 결과 job4 = success / 출력 = Always executed
+  # 실제 실행 = 10:36:11 ~ 10:36:15
   # job3과 병렬 실행 가능 / 두 job의 시작, 종료 순서는 고정되지 않음
   job4:
     needs: job1
