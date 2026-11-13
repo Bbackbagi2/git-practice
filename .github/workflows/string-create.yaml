@@ -1,0 +1,32 @@
+name: String Creation Example
+on: workflow_dispatch
+jobs:
+  string-create:
+    runs-on: ubuntu-latest
+    steps:
+      - name: String Creation Test
+        env:
+          # format() → {0}, {1} 자리를 뒤쪽 인수로 치환
+          # 번호는 0부터 → {0} = 첫 번째 값, {1} = 두 번째 값
+          # 1번 → 고정 문구 'Hello ' + 값 1개('GitHub')
+          RESULT_FORMAT_1: ${{ format('Hello {0}', 'GitHub') }} # 출력 Hello GitHub
+          # 2번 → 값 2개('Hello', 'World') + 사이 공백
+          RESULT_FORMAT_2: ${{ format('{0} {1}', 'Hello', 'World') }} # 출력 Hello World
+          # 3번 → 고정 문구 Name·Age + 문자열 'Kim' + 숫자 20(문자열로 변환)
+          # 1·2번 → ': ' 없음 → 바깥 큰따옴표 생략 가능
+          # 3번 → 'Name: ', 'Age: '에 콜론 + 공백 → 전체 식을 큰따옴표로 감싸기
+          # 바깥 큰따옴표 생략 → ': '를 키/값 구분으로 해석 → YAML 파싱 오류
+          # 식 계산 전 오류 → mapping values are not allowed in this context
+          # 안쪽 '...' → format의 문자열 인수 / 바깥 "..." → 전체 YAML 값 범위
+          # 바깥 큰따옴표 → YAML 해석 후 제거, 출력값에는 포함 X
+          RESULT_FORMAT_3: "${{ format('Name: {0}, Age: {1}', 'Kim', 20) }}" # 출력 Name: Kim, Age: 20
+
+          # fromJSON() → JSON 문자열을 실제 배열로 변환
+          # join(배열, 구분자) → 원소 사이에 구분자를 넣어 문자열로 연결
+          RESULT_JOIN_1: ${{ join(fromJSON('["Apple","Banana","Cherry"]'), ', ') }} #  출력 Apple, Banana, Cherry
+          RESULT_JOIN_2: ${{ join(fromJSON('["A","B","C"]'), '-') }} # 출력 A-B-C
+          # 구분자 생략 → 기본값 ',' / 공백 자동 추가 X
+          RESULT_JOIN_3: ${{ join(fromJSON('["Red","Green","Blue"]')) }} # 출력 Red,Green,Blue
+
+        # printenv → 환경변수 목록 / grep → RESULT_만 선택 / sort → 이름순 정렬
+        run: printenv | grep '^RESULT_' | sort
