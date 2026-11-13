@@ -5,7 +5,8 @@
 # GITHUB_OUTPUT에 이름=값 기록 / 후속 step에서 steps.id.outputs.이름으로 참조
 # >> = 파일 끝에 내용 추가 / 큰따옴표 = 파일 경로를 한 인수로 전달
 # 실행 순서 = Normal ENV, Create Variables, Read Variables
-# 아래 출력 = 실제 실행 전 예상값
+# 실제 실행 기록 = Actions 43347503446 / 실행 코드 f449348
+# 전체 결과 = success / Normal ENV, Create Variables, Read Variables 모두 success
 name: Variable Example
 on: workflow_dispatch
 jobs:
@@ -17,11 +18,12 @@ jobs:
       MESSAGE: Hello GitHub
 
     steps:
-      # 1. 미리 선언한 MESSAGE 읽기 / 예상 출력 ENV = Hello GitHub
+      # 1. 미리 선언한 MESSAGE 읽기 / 실제 출력 ENV = Hello GitHub
       - name: Normal ENV
         run: echo "ENV = $MESSAGE"
 
       # 2. 실행 중 값 생성 / 두 특수 파일에 각각 기록
+      # 결과 success / 두 파일 기록 완료, 후속 step에서 값 확인
       # DYNAMIC = Hello ENV / Create Variables 완료 후 다음 step부터 사용
       # result = Hello OUTPUT / create step의 output으로 등록
       - name: Create Variables
@@ -30,12 +32,12 @@ jobs:
           echo "DYNAMIC=Hello ENV" >> "$GITHUB_ENV"
           echo "result=Hello OUTPUT" >> "$GITHUB_OUTPUT"
 
-      # 3. 후속 step에서 생성된 값 읽기
+      # 3. 후속 step에서 생성된 값 읽기 / 결과 success
       # steps.create.outputs.result = id가 create인 step의 result 출력값
       # OUTPUT_VALUE에 담아 shell에서 $OUTPUT_VALUE로 읽기
-      # 예상 출력 Normal ENV = Hello GitHub
-      # 예상 출력 GITHUB_ENV = Hello ENV
-      # 예상 출력 GITHUB_OUTPUT = Hello OUTPUT
+      # 실제 출력 Normal ENV = Hello GitHub
+      # 실제 출력 GITHUB_ENV = Hello ENV
+      # 실제 출력 GITHUB_OUTPUT = Hello OUTPUT
       - name: Read Variables
         env:
           OUTPUT_VALUE: ${{ steps.create.outputs.result }}
