@@ -1,0 +1,54 @@
+# 전달 순서 = step 출력 생성, job 출력 연결, needs로 대기, 다음 job에서 참조
+# step 출력 참조 = steps.<step ID>.outputs.<출력 이름>
+# job 출력 참조 = needs.<job ID>.outputs.<출력 이름>
+# 이 예제의 이름 구분 = value(step 출력), result(job 출력), RESULT(job2 환경변수)
+# GITHUB_ENV에 쓴 환경변수의 사용 범위 = 같은 job의 후속 step
+# 아래 출력 = 실행 전 예상값
+name: Job Output Example
+on: workflow_dispatch
+jobs:
+  # 먼저 실행 / 값 생성과 job 출력 정의
+  job1:
+    runs-on: ubuntu-latest
+
+    # step test의 value를 job1의 출력 result로 연결
+    # outputs는 속성 선언 / 실제 값은 job1 종료 시 평가
+    outputs:
+      result: ${{ steps.test.outputs.value }}
+
+    steps:
+      # 1. MESSAGE는 환경 파일, value는 출력 파일에 기록
+      # step 완료 후 MESSAGE = Hello ENV / steps.test.outputs.value = PASS
+      - name: Create Variables
+        id: test # steps.test로 참조할 step ID
+        run: |
+          echo "MESSAGE=Hello ENV" >> "$GITHUB_ENV"
+          echo "value=PASS" >> "$GITHUB_OUTPUT"
+
+      # 2. job1의 후속 step / step output을 OUTPUT_VALUE 환경변수에 담아 읽기
+      # 예상 출력 GITHUB_ENV = Hello ENV / GITHUB_OUTPUT = PASS
+      - name: Read Variables
+        env:
+          OUTPUT_VALUE: ${{ steps.test.outputs.value }}
+        run: |
+          echo "GITHUB_ENV = $MESSAGE"
+          echo "GITHUB_OUTPUT = $OUTPUT_VALUE"
+
+  # job1 성공 완료 후 실행 / 별도 runner 환경
+  job2:
+    needs: job1 # job1 완료 대기, needs.job1 참조 가능
+    runs-on: ubuntu-latest
+
+    # job1의 result 출력값 PASS를 job2의 RESULT 환경변수로 받기
+    env:
+      RESULT: ${{ needs.job1.outputs.result }}
+
+    steps:
+      # 3. job2에서 job1의 output 확인
+      # 예상 출력 GITHUB_OUTPUT = PASS / GITHUB_ENV = Not Available
+      # MESSAGE는 job1의 환경변수 / job2에는 별도 선언 없음
+      # Bash의 ":-" = 변수가 미정의 또는 빈 값이면 뒤의 기본 문구 사용
+      - name: Read Job Output
+        run: |
+          echo "GITHUB_OUTPUT = $RESULT"
+          echo "GITHUB_ENV = ${MESSAGE:-Not Available}"
