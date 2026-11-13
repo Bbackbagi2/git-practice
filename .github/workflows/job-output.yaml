@@ -3,7 +3,10 @@
 # job 출력 참조 = needs.<job ID>.outputs.<출력 이름>
 # 이 예제의 이름 구분 = value(step 출력), result(job 출력), RESULT(job2 환경변수)
 # GITHUB_ENV에 쓴 환경변수의 사용 범위 = 같은 job의 후속 step
-# 아래 출력 = 실행 전 예상값
+# 실제 실행 기록 = Actions 43348153612 / 실행 코드 a7409c5
+# 전체 결과 = success / job1 성공 완료 후 job2 실행, 두 job 모두 success
+# 실제 전달값 = steps.test.outputs.value = PASS / job1.outputs.result = PASS
+# job2의 RESULT = PASS / MESSAGE 미정의로 기본 문구 Not Available 사용
 name: Job Output Example
 on: workflow_dispatch
 jobs:
@@ -26,7 +29,7 @@ jobs:
           echo "value=PASS" >> "$GITHUB_OUTPUT"
 
       # 2. job1의 후속 step / step output을 OUTPUT_VALUE 환경변수에 담아 읽기
-      # 예상 출력 GITHUB_ENV = Hello ENV / GITHUB_OUTPUT = PASS
+      # 실제 출력 GITHUB_ENV = Hello ENV / GITHUB_OUTPUT = PASS
       - name: Read Variables
         env:
           OUTPUT_VALUE: ${{ steps.test.outputs.value }}
@@ -45,7 +48,7 @@ jobs:
 
     steps:
       # 3. job2에서 job1의 output 확인
-      # 예상 출력 GITHUB_OUTPUT = PASS / GITHUB_ENV = Not Available
+      # 실제 출력 GITHUB_OUTPUT = PASS / GITHUB_ENV = Not Available
       # MESSAGE는 job1의 환경변수 / job2에는 별도 선언 없음
       # Bash의 ":-" = 변수가 미정의 또는 빈 값이면 뒤의 기본 문구 사용
       - name: Read Job Output
