@@ -11,7 +11,10 @@
 # Print Hello = 조건 false / skipped / Hello 출력 건너뜀
 # Print Goodbye = !false가 true / Goodbye 출력 / success
 # 당시 Goodbye 속성 순서 = run, if / 이번에는 if, run으로 정렬
-# 새 실행 결과 = 해당 실행 ID에 '1'이 있는지 다시 판정
+# 위치 정리 후 실행 = Actions 43342897211 / 전체 성공
+# 실행 ID에 '1' 포함 / contains(...) = true / !contains(...) = false
+# Print Hello = success / Hello 출력 / Print Goodbye = skipped
+# 분기 결과의 기준 = 각 실행 ID에 '1' 포함 여부
 name: Conditional Example
 on: workflow_dispatch
 jobs:
