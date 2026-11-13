@@ -8,15 +8,15 @@ jobs:
         env:
           # contains는 문자열 안의 어느 위치든 부분 문자열이 포함되면 true를 반환한다.
           # 완전한 단어 일치가 필요하지 않아 'Git'은 'GitHub'의 일부로 일치한다.
-          TEST_CONTAINS_1: ${{ contains('Hello GitHub', 'Git') }} # true
-          TEST_CONTAINS_2: ${{ contains('Hello GitHub', 'Python') }} # false
+          TEST_CONTAINS_1: ${{ contains('Hello GitHub', 'Git') }} # true, 'Git'이 'Hello GitHub' 안에 포함되어 있다.
+          TEST_CONTAINS_2: ${{ contains('Hello GitHub', 'Python') }} # false, 'Python'은 'Hello GitHub' 안에 없다.
           # startsWith는 문자열의 시작 부분이 일치하는지 검사한다.
-          TEST_STARTSWITH_1: ${{ startsWith('Hello GitHub', 'Hello') }} # true
-          TEST_STARTSWITH_2: ${{ startsWith('Hello GitHub', 'Git') }} # false
+          TEST_STARTSWITH_1: ${{ startsWith('Hello GitHub', 'Hello') }} # true, 'Hello GitHub'가 'Hello'로 시작한다.
+          TEST_STARTSWITH_2: ${{ startsWith('Hello GitHub', 'Git') }} # false, 'Hello GitHub'는 'Git'으로 시작하지 않는다.
           # endsWith는 문자열의 끝부분이 일치하는지 검사한다.
-          TEST_ENDSWITH_1: ${{ endsWith('Hello GitHub', 'GitHub') }} # true
-          TEST_ENDSWITH_2: ${{ endsWith('Hello GitHub', 'Hello') }} # false
+          TEST_ENDSWITH_1: ${{ endsWith('Hello GitHub', 'GitHub') }} # true, 'Hello GitHub'가 'GitHub'로 끝난다.
+          TEST_ENDSWITH_2: ${{ endsWith('Hello GitHub', 'Hello') }} # false, 'Hello GitHub'는 'Hello'로 끝나지 않는다.
           # 세 함수 모두 대소문자를 구분하지 않으므로 'github'도 'GitHub'와 일치한다.
-          TEST_CASE: ${{ contains('Hello GitHub', 'github') }} # true
+          TEST_CASE: ${{ contains('Hello GitHub', 'github') }} # true, 대소문자를 구분하지 않아 'github'가 'GitHub'와 일치한다.
 
         run: printenv | grep '^TEST_' | sort
