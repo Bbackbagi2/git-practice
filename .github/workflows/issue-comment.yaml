@@ -6,12 +6,13 @@
 # issues write = Issue와 댓글 작성 권한
 # GH_TOKEN = gh가 자동으로 읽는 인증용 환경변수
 # curl 인증 = Authorization 헤더에 Bearer 토큰 전달
-# 실행 순서 = 새 Issue 열기, CLI 댓글 작성, curl 댓글 작성
+# 1차 실습 = issues opened 이벤트 / a65546d / Actions 43349901147 / success
+# 실제 결과 = Issue #1에 CLI 댓글과 curl 댓글 각 1개 등록
+# 2차 실습 = push 이벤트 / 매 push마다 실습 Issue #1에 댓글 2개 추가
+# 실행 순서 = push 발생, CLI 댓글 작성, curl 댓글 작성
 # 예상 결과 = 같은 Issue에 실습 댓글 2개 등록
 name: Issue Comment Example
-on:
-  issues:
-    types: [opened] # Issue가 새로 열릴 때 실행
+on: push # 브랜치 제한 없이 push 이벤트로 실행
 permissions:
   issues: write # API 댓글 생성에 필요한 쓰기 권한
 jobs:
@@ -21,8 +22,9 @@ jobs:
     env:
       # secrets.GITHUB_TOKEN 값을 GH_TOKEN에 전달
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # issues 이벤트 payload에서 방금 열린 Issue 번호 가져오기
-      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      # push 이벤트에는 Issue 번호 필드가 없어 실습 대상 Issue 번호 직접 지정
+      # 대상 = https://github.com/Bbackbagi2/git-practice/issues/1
+      ISSUE_NUMBER: '1'
 
     steps:
       # 1. GitHub CLI 사용 / GH_TOKEN으로 인증
