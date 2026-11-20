@@ -24,3 +24,21 @@ def test_csv_empty(tmp_path):
 def test_fixture_revenue(sample_csv):
     # pytest가 sample_csv fixture의 반환값을 인자로 전달
     assert revenue_from_csv(sample_csv) == 35_000
+
+
+def test_csv_file_not_found(tmp_path):
+    # 없는 파일 경로는 FileNotFoundError를 발생시킴
+    import pytest
+
+    with pytest.raises(FileNotFoundError):
+        revenue_from_csv(tmp_path / "missing.csv")
+
+
+def test_csv_invalid_number(tmp_path):
+    # 숫자가 아닌 가격은 int 변환 시 ValueError 발생
+    import pytest
+
+    csv_file = tmp_path / "invalid.csv"
+    csv_file.write_text("price,quantity\ninvalid,2\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        revenue_from_csv(csv_file)

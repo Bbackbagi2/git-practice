@@ -5,3 +5,6 @@ __pycache__/
 .ruff_cache/
 .coverage
 coverage.xml
+
+# 자동 생성 정적 보고서
+site/
