@@ -1,4 +1,6 @@
 # tests/conftest.py — 같은 폴더와 하위 테스트에서 쓰는 fixture
+# conftest.py는 pytest가 자동으로 찾는 특별한 설정 파일 이름
+# test_*.py는 테스트 수집용; conftest.py는 fixture 공유·설정용
 import pytest
 
 
