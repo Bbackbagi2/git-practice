@@ -1,3 +1,4 @@
+# 4쪽 공통 개발·테스트 의존성
 ruff
 pytest
 pytest-cov
